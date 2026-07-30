@@ -4,14 +4,16 @@ import java.util.*;
  * BoundedStack
  */
 public class BoundedStack {
-    private final List<String> elements ;
+    private final List<String> catalog ;
     private final int capacity ;
-    //AF(elements,capacity) = elements คือ Stack ที่ใช้เก็บข้อมูลตามความจุ(capacity) ที่กำหนดไว้
+    
+    
+    //AF(catalog,capacity) = elements คือ Stack ที่ใช้เก็บข้อมูลตามความจุ(capacity) ที่กำหนดไว้
     //RI
     //-capacity > 0
-    //-stack ต้องไม่เป็น null
-    //-stack != ""
-    //-จำนวน stack ต้องน้อยกว่าหรือเท่ากับ capacity
+    //-catalog ต้องไม่เป็น null
+    //-catalog != ""
+    //-จำนวนหนังต้องน้อยกว่าหรือเท่ากับ capacity
     //
 
     /**
@@ -19,14 +21,52 @@ public class BoundedStack {
      * @param capacity
      */
     public BoundedStack(int capacity){
-        this.elements = new ArrayList<>();
+        this.catalog = new ArrayList<>();
         this.capacity = capacity ; 
+        
+
     }
+    private void checkRep() {
+        
+    }
+    
+    public BoundedStack(List<String> initial) {
+        if(initial == null) throw new IllegalArgumentException() ;
+        this.capacity = initial.size();
+        if(initial.size() > capacity) throw new IllegalArgumentException() ;
+        Set<String> seen = new HashSet<>();
+        for (String s : initial) {
+            if(s == null || s == "") throw new IllegalArgumentException();
+            if(!seen.add(s)) throw new IllegalArgumentException() ;
+        }
+        this.catalog = new ArrayList<>(initial) ;  // แก้บรรทัดนี้
+        checkRep(); 
+    }
+    
 
     /**
      * @param s
      */
-    public void push(String s){
+    public boolean add(String movie){
+        return false ;
+    }
+    public boolean pop(String movie){
+        return false ;
+    }
+     
+    public List<String> catalog() {
+        return new ArrayList<>(catalog);   // แก้บรรทัดนี้
+    }
 
+
+    public int size() {
+        return catalog.size();   // แก้บรรทัดนี้
+    }
+     public boolean contains(String movie) {
+        return catalog.contains(movie);   // แก้บรรทัดนี้
+    }
+    @Override
+    public String toString() {
+        return catalog.toString();
     }
 }
