@@ -18,7 +18,7 @@ public class BoundedStack {
 
     /**
      * 
-     * @param catalog
+     * @param capacity
      */
     public BoundedStack(int capacity){
         this.catalog = new ArrayList<>();
@@ -27,80 +27,63 @@ public class BoundedStack {
 
     }
     private void checkRep() {
-    assert catalog != null;
-    assert capacity > 0;
-    assert catalog.size() <= capacity ;
+        assert catalog != null ;
+        assert catalog.size() <= capacity ;
 
-    Set<String> set = new HashSet<>();
+        Set<String> set = new HashSet<>();
 
-    for(String s : catalog){
-        assert s != null;
-        assert !s.isEmpty();
-        assert set.add(s);
-    }
+        for(String s : catalog){
+            assert s != null;
+            assert !s.isEmpty();
+            assert set.add(s);
+        }
     }
     
     public BoundedStack(List<String> initial) {
         if(initial == null) throw new IllegalArgumentException() ;
         this.capacity = initial.size();
-        this.catalog = new ArrayList<>();
         if(initial.size() > capacity) throw new IllegalArgumentException() ;
         Set<String> seen = new HashSet<>();
         for (String s : initial) {
             if(s == null || s == "") throw new IllegalArgumentException();
             if(!seen.add(s)) throw new IllegalArgumentException() ;
-             catalog.add(s);
         }
-        checkRep();
+        this.catalog = new ArrayList<>(initial) ;  // แก้บรรทัดนี้
+        checkRep(); 
     }
+    
 
+    /**
+     * @param s
+     */
     public boolean push(String movie){
-        /**if(movie == null || movie.isEmpty())
-        throw new IllegalArgumentException();
-
-        if(catalog.contains(movie))
-        return false;
-
-        if(catalog.size() == capacity)
-        return false;
-
-        catalog.add(movie);
-        checkRep();
-
-        return true;/* */
-        if(movie==null || movie =="") throw new IllegalArgumentException();
-        if(catalog.contains(catalog) || catalog.size()==MAX_MOVIES)
-        return false ;
-        movie.add(movie);
-        checkRep();
-        return true
         return false ;
     }
     public boolean pop(String movie){
-       /*if(catalog.remove(movie)){
-        checkRep();
-        return true;
-        }
-    return false ; /* */ 
-     if(!movies().contains(movie) ) 
         return false ;
-       movies().remove(movie);
-       checkRep();
-        return false;
     }
-
+     
     public List<String> catalog() {
         return new ArrayList<>(catalog);   // แก้บรรทัดนี้
     }
+    
+    public BoundedStack rankMovie(List<String> rankedList) {
+        if (rankedList == null) {
+            throw new IllegalArgumentException("Ranked list cannot be null");
+        }
+        List<String> copy = new ArrayList<>();
+        for (String item : rankedList) {
+            if (this.catalog.contains(item)) {
+                copy.add(item);
+            }
+        }
+        return new BoundedStack(copy);   
+    }
 
-
+    
     public int size() {
         return catalog.size();   // แก้บรรทัดนี้
     }
-    public List<String> movies() {
-    return new ArrayList<>();
-    }
-
      public boolean contains(String movie) {
         return catalog.contains(movie);   // แก้บรรทัดนี้
     }
