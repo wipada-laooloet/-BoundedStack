@@ -6,7 +6,12 @@ import java.util.*;
 public class BoundedStack {
     private final List<String> catalog ;
     private final int capacity ;
+    /*
+    วิภาดา ลออเลิศ 6821601445
+    สิริกร คำกองแก้ว6821601542
     
+    */
+   /* */
     
     //AF(catalog,capacity) = elements คือ Stack ที่ใช้เก็บข้อมูลตามความจุ(capacity) ที่กำหนดไว้
     //RI
@@ -19,6 +24,7 @@ public class BoundedStack {
     /**
      * สร้าง Stack เปล่า และกำหนดจำนวนหนังสูงสุดที่สามารถเก็บได้
      * @param capacity จำนวนหนังสูงสุดที่ Stack สามารถเก็บได้
+     * @throws IllegalArgumentException ถ้ากำหนด capacity น้อยกว่าหรือเท่ากับ 0
      */
     public BoundedStack(int capacity){
         this.catalog = new ArrayList<>();
@@ -40,8 +46,9 @@ public class BoundedStack {
     }
     /**
     * สร้าง Stack จากรายการหนังที่กำหนดมา
-    *
-    * @param initial รายการหนังเริ่มต้นที่จะนำมาเก็บใน Stack
+    *@param initial รายการหนังเริ่มต้นที่จะนำมาเก็บใน Stack
+    *@throws IllegalArgumentException ถ้า initial เป็น null
+    * หรือมีชื่อหนังเป็น null, เป็นข้อความว่าง หรือมีชื่อซ้ำกัน
     */
     public BoundedStack(List<String> initial) {
        if(initial == null) throw new IllegalArgumentException() ;
@@ -59,7 +66,7 @@ public class BoundedStack {
 
     /**
    * เพิ่มหนังเข้าไปใน Stack
-    *
+    * @throws IllegalArgumentException ถ้า movie เป็น null หรือเป็นข้อความว่าง
     * @param movie ชื่อหนังที่ต้องการเพิ่ม
     * @return true ถ้าเพิ่มสำเร็จ, false ถ้าหนังมีอยู่แล้วหรือ Stack เต็ม
     */
@@ -97,7 +104,7 @@ public class BoundedStack {
     /**
     * เลือกเฉพาะหนังที่มีอยู่ใน Stack
     * โดยเรียงลำดับตามรายการที่รับเข้ามา
-    *
+    *@throws IllegalArgumentException ถ้า rankedList เป็น null
     * @param rankedList รายการหนังที่ต้องการจัดอันดับ
     * @return Stack ใหม่ที่มีเฉพาะหนังที่ตรงกัน
     */
