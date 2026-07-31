@@ -40,27 +40,38 @@ public class BoundedStack {
     }
     
     public BoundedStack(List<String> initial) {
-        if(initial == null) throw new IllegalArgumentException() ;
+       if(initial == null) throw new IllegalArgumentException() ;
         this.capacity = initial.size();
+        this.catalog = new ArrayList<>();
         if(initial.size() > capacity) throw new IllegalArgumentException() ;
         Set<String> seen = new HashSet<>();
         for (String s : initial) {
             if(s == null || s == "") throw new IllegalArgumentException();
             if(!seen.add(s)) throw new IllegalArgumentException() ;
-        }
-        this.catalog = new ArrayList<>(initial) ;  // แก้บรรทัดนี้
-        checkRep(); 
+             catalog.add(s);
     }
-    
+    checkRep();
+}
 
     /**
      * @param s
      */
     public boolean push(String movie){
+        if(movie==null || movie =="") throw new IllegalArgumentException();
+        if(catalog.contains(movie) || catalog.size()==capacity)
         return false ;
+        catalog.add(movie);
+        checkRep();
+        return false;
+        
     }
     public boolean pop(String movie){
+        if(!catalog.contains(movie) ) 
         return false ;
+       catalog.remove(movie);
+       checkRep();
+        return false;
+        
     }
      
     public List<String> catalog() {
