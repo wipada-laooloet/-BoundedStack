@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 /**
  * Test Runner
@@ -30,10 +31,11 @@ public class BoudedStackTest {
 
         //function ที่เทส อย่าลืมมาเขียน
         testCreators();
-        testPush() ;
+        testAdd() ;
         testRemove() ;
         testObservers() ;
         testExposure() ;
+        testRankMovie() ;
 
 
         System.out.println("\n=== Summary ===");
@@ -91,7 +93,7 @@ public class BoudedStackTest {
     }
 
 
-    private static void testPush() {
+    private static void testAdd() {
         System.out.println("\n-- Add --");
 
         BoundedStack s = new BoundedStack(10);
@@ -125,17 +127,17 @@ public class BoudedStackTest {
         }
         check("add(null) -> throws IllegalArgumentException", threwNull);
 
-        check("failed adds leave catalog unchanged", s.size() == 3);
+        check("failed adds leave playlist unchanged", s.size() == 3);
 
         // boundary: เติมจนเต็มพอดีแล้วเติมเพิ่ม
         BoundedStack full = new BoundedStack(10);
         int cap = 10 ;
         for (int i = 0; i < cap; i++) {
-            full.push("Movie" + i);
+            full.push("song" + i);
         }
-        check("can fill up to MAX_MOVIES", full.size() == cap);
+        check("can fill up to MAX_SONGS", full.size() == cap);
         check("add when full -> returns false", !full.push("one more"));
-        check("full catalog stays at MAX_MOVIES",
+        check("full playlist stays at MAX_SONGS",
                 full.size() == cap);
     }
 
@@ -145,19 +147,19 @@ public class BoudedStackTest {
     BoundedStack s = new BoundedStack(Arrays.asList("A", "B", "C"));
         check("remove(B) -> returns true", s.pop("B"));
         check("remove -> size decreases", s.size() == 2);
-        check("remove -> movie is gone", !s.contains("B"));
+        check("remove -> song is gone", !s.contains("B"));
         check("remove keeps the others in order",
                 s.catalog().equals(Arrays.asList("A", "C")));
 
         // ลบเพลงที่ไม่มีไม่ใช่ error — คืน false เฉย ๆ
-        check("remove missing movie -> returns false", !s.pop("nope"));
+        check("remove missing song -> returns false", !s.pop("nope"));
         check("failed remove leaves size unchanged", s.size() == 2);
 
         // boundary: ลบจนหมด
         s.pop("A");
         s.pop("C");
         check("remove all -> empty", s.size() == 0);
-        check("remove on empty catalog -> returns false", !s.pop("A"));
+        check("remove on empty playlist -> returns false", !s.pop("A"));
     }
 
         private static void testObservers() {
@@ -165,9 +167,9 @@ public class BoudedStackTest {
 
         BoundedStack s = new BoundedStack(Arrays.asList("A", "B"));
         check("size reports 2", s.size() == 2);
-        check("contains finds an existing moive", s.contains("A"));
-        check("contains rejects a missing movie", !s.contains("Z"));
-        check("movies returns the full list in order",
+        check("contains finds an existing song", s.contains("A"));
+        check("contains rejects a missing song", !s.contains("Z"));
+        check("songs returns the full list in order",
                 s.catalog().equals(Arrays.asList("A", "B")));
 
         int before = s.size();
@@ -186,16 +188,16 @@ public class BoudedStackTest {
 
         List<String> got = s.catalog();
         got.clear();
-        check("clearing result of movies() does not affect catalog",
+        check("clearing result of songs() does not affect playlist",
                 s.size() == 1);
 
         got = s.catalog();
         got.add("injected");
-        check("adding to result of moives() does not affect catalog",
+        check("adding to result of songs() does not affect playlist",
                 s.size() == 1 && !s.contains("injected"));
 
         // สองครั้งต้องเป็นคนละ object
-        check("movies() returns a fresh list each call",
+        check("songs() returns a fresh list each call",
                 s.catalog() != s.catalog());
 
         // ขาเข้า: แก้ list ที่ส่งให้ constructor ต้องไม่กระทบ rep
@@ -203,12 +205,47 @@ public class BoudedStackTest {
         BoundedStack p = new BoundedStack(input);
 
         input.clear();
-        check("clearing constructor argument does not affect cat0alog",
+        check("clearing constructor argument does not affect playlist",
                 p.size() == 2);
 
         input.add("injected");
-        check("adding to constructor argument does not affect catealog",
+        check("adding to constructor argument does not affect playlist",
                 !p.contains("injected"));
     }
+
+    private static void testRankMovie() {
+        System.out.println("\n-- Rank Movie --");
+
+        // 1. ทดสอบการเรียงลำดับตาม List ที่ส่งเข้าไป
+        BoundedStack original = new BoundedStack(Arrays.asList("Movie A", "Movie B", "Movie C"));
+        List<String> newRank = Arrays.asList("Movie C", "Movie A", "Movie B");
+        
+        BoundedStack ranked = original.rankMovie(newRank);
+
+        check("rankMovie() -> returns new stack with new order",
+                ranked.catalog().equals(Arrays.asList("Movie C", "Movie A", "Movie B")));
+
+        // 2. ทดสอบว่าถ้าส่งชื่อหนังที่ไม่เคยอยู่ใน stack มา มันจะไม่หลุดเข้ามา
+        List<String> rankWithExtra = Arrays.asList("Movie C", "Unknown Movie", "Movie A");
+        BoundedStack rankedFiltered = original.rankMovie(rankWithExtra);
+
+        check("rankMovie() -> ignores movies not in original catalog",
+                rankedFiltered.catalog().equals(Arrays.asList("Movie C", "Movie A")));
+
+        // 3. ทดสอบว่า Stack เดิม (original) ต้องไม่ถูกแก้ไข
+        check("rankMovie() -> original stack stays unchanged",
+                original.catalog().equals(Arrays.asList("Movie A", "Movie B", "Movie C")));
+
+        // 4. ทดสอบ Boundary Case: ถ้าส่ง null เข้าไป ต้องโยน IllegalArgumentException
+        boolean threwNull = false;
+        try {
+            original.rankMovie(null);
+        } catch (IllegalArgumentException e) {
+            threwNull = true;
+        }
+        check("rankMovie(null) -> throws IllegalArgumentException", threwNull);
+    }
+    
 }
+
 
