@@ -125,7 +125,7 @@ public class BoudedStackTest {
         }
         check("add(null) -> throws IllegalArgumentException", threwNull);
 
-        check("failed adds leave catealog unchanged", s.size() == 3);
+        check("failed adds leave catalog unchanged", s.size() == 3);
 
         // boundary: เติมจนเต็มพอดีแล้วเติมเพิ่ม
         BoundedStack full = new BoundedStack(10);
@@ -135,7 +135,7 @@ public class BoudedStackTest {
         }
         check("can fill up to MAX_MOVIES", full.size() == cap);
         check("add when full -> returns false", !full.push("one more"));
-        check("full catealog stays at MAX_MOVIES",
+        check("full catalog stays at MAX_MOVIES",
                 full.size() == cap);
     }
 
@@ -157,7 +157,7 @@ public class BoudedStackTest {
         s.pop("A");
         s.pop("C");
         check("remove all -> empty", s.size() == 0);
-        check("remove on empty catealog -> returns false", !s.pop("A"));
+        check("remove on empty catalog -> returns false", !s.pop("A"));
     }
 
         private static void testObservers() {
@@ -186,12 +186,12 @@ public class BoudedStackTest {
 
         List<String> got = s.catalog();
         got.clear();
-        check("clearing result of movies() does not affect catealog",
+        check("clearing result of movies() does not affect catalog",
                 s.size() == 1);
 
         got = s.catalog();
         got.add("injected");
-        check("adding to result of moives() does not affect catealog",
+        check("adding to result of moives() does not affect catalog",
                 s.size() == 1 && !s.contains("injected"));
 
         // สองครั้งต้องเป็นคนละ object
@@ -203,7 +203,7 @@ public class BoudedStackTest {
         BoundedStack p = new BoundedStack(input);
 
         input.clear();
-        check("clearing constructor argument does not affect catealog",
+        check("clearing constructor argument does not affect cat0alog",
                 p.size() == 2);
 
         input.add("injected");
