@@ -30,7 +30,7 @@ public class BoudedStackTest {
 
         //function ที่เทส อย่าลืมมาเขียน
         testCreators();
-        testAdd() ;
+        testPush() ;
         testRemove() ;
         testObservers() ;
         testExposure() ;
@@ -91,27 +91,27 @@ public class BoudedStackTest {
     }
 
 
-    private static void testAdd() {
+    private static void testPush() {
         System.out.println("\n-- Add --");
 
         BoundedStack s = new BoundedStack(10);
-        check("add(A) -> returns true", s.add("A"));
+        check("add(A) -> returns true", s.push("A"));
         check("add(A) -> size 1", s.size() == 1);
         check("add(A) -> found by contains", s.contains("A"));
 
-        s.add("B");
-        s.add("C");
+        s.push("B");
+        s.push("C");
         check("add preserves insertion order",
                 s.catalog().equals(Arrays.asList("A", "B", "C")));
 
         // เพลงซ้ำไม่ใช่ error — คืน false เฉย ๆ
-        check("add duplicate -> returns false", !s.add("A"));
+        check("add duplicate -> returns false", !s.push("A"));
         check("failed add leaves size unchanged", s.size() == 3);
 
         // input ผิดเงื่อนไขโยน exception
         boolean threwEmpty = false;
         try {
-            s.add("");
+            s.push("");
         } catch (IllegalArgumentException e) {
             threwEmpty = true;
         }
@@ -119,23 +119,23 @@ public class BoudedStackTest {
 
         boolean threwNull = false;
         try {
-            s.add(null);
+            s.push(null);
         } catch (IllegalArgumentException e) {
             threwNull = true;
         }
         check("add(null) -> throws IllegalArgumentException", threwNull);
 
-        check("failed adds leave playlist unchanged", s.size() == 3);
+        check("failed adds leave catealog unchanged", s.size() == 3);
 
         // boundary: เติมจนเต็มพอดีแล้วเติมเพิ่ม
         BoundedStack full = new BoundedStack(10);
         int cap = 10 ;
         for (int i = 0; i < cap; i++) {
-            full.add("song" + i);
+            full.push("Movie" + i);
         }
-        check("can fill up to MAX_SONGS", full.size() == cap);
-        check("add when full -> returns false", !full.add("one more"));
-        check("full playlist stays at MAX_SONGS",
+        check("can fill up to MAX_MOVIES", full.size() == cap);
+        check("add when full -> returns false", !full.push("one more"));
+        check("full catealog stays at MAX_MOVIES",
                 full.size() == cap);
     }
 
@@ -145,19 +145,19 @@ public class BoudedStackTest {
     BoundedStack s = new BoundedStack(Arrays.asList("A", "B", "C"));
         check("remove(B) -> returns true", s.pop("B"));
         check("remove -> size decreases", s.size() == 2);
-        check("remove -> song is gone", !s.contains("B"));
+        check("remove -> movie is gone", !s.contains("B"));
         check("remove keeps the others in order",
                 s.catalog().equals(Arrays.asList("A", "C")));
 
         // ลบเพลงที่ไม่มีไม่ใช่ error — คืน false เฉย ๆ
-        check("remove missing song -> returns false", !s.pop("nope"));
+        check("remove missing movie -> returns false", !s.pop("nope"));
         check("failed remove leaves size unchanged", s.size() == 2);
 
         // boundary: ลบจนหมด
         s.pop("A");
         s.pop("C");
         check("remove all -> empty", s.size() == 0);
-        check("remove on empty playlist -> returns false", !s.pop("A"));
+        check("remove on empty catealog -> returns false", !s.pop("A"));
     }
 
         private static void testObservers() {
@@ -165,9 +165,9 @@ public class BoudedStackTest {
 
         BoundedStack s = new BoundedStack(Arrays.asList("A", "B"));
         check("size reports 2", s.size() == 2);
-        check("contains finds an existing song", s.contains("A"));
-        check("contains rejects a missing song", !s.contains("Z"));
-        check("songs returns the full list in order",
+        check("contains finds an existing moive", s.contains("A"));
+        check("contains rejects a missing movie", !s.contains("Z"));
+        check("movies returns the full list in order",
                 s.catalog().equals(Arrays.asList("A", "B")));
 
         int before = s.size();
@@ -182,20 +182,20 @@ public class BoudedStackTest {
 
         // ขาออก: แก้ list ที่ได้จาก songs() ต้องไม่กระทบ rep
         BoundedStack s = new BoundedStack(10);
-        s.add("A");
+        s.push("A");
 
         List<String> got = s.catalog();
         got.clear();
-        check("clearing result of songs() does not affect playlist",
+        check("clearing result of movies() does not affect catealog",
                 s.size() == 1);
 
         got = s.catalog();
         got.add("injected");
-        check("adding to result of songs() does not affect playlist",
+        check("adding to result of moives() does not affect catealog",
                 s.size() == 1 && !s.contains("injected"));
 
         // สองครั้งต้องเป็นคนละ object
-        check("songs() returns a fresh list each call",
+        check("movies() returns a fresh list each call",
                 s.catalog() != s.catalog());
 
         // ขาเข้า: แก้ list ที่ส่งให้ constructor ต้องไม่กระทบ rep
@@ -203,13 +203,12 @@ public class BoudedStackTest {
         BoundedStack p = new BoundedStack(input);
 
         input.clear();
-        check("clearing constructor argument does not affect playlist",
+        check("clearing constructor argument does not affect catealog",
                 p.size() == 2);
 
         input.add("injected");
-        check("adding to constructor argument does not affect playlist",
+        check("adding to constructor argument does not affect catealog",
                 !p.contains("injected"));
     }
 }
-
 

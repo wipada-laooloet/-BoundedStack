@@ -5,7 +5,7 @@ import java.util.*;
  */
 public class BoundedStack {
     private final List<String> catalog ;
-    private final int capacity ;
+    private final int moive ;
     
     
     //AF(catalog,capacity) = elements คือ Stack ที่ใช้เก็บข้อมูลตามความจุ(capacity) ที่กำหนดไว้
@@ -18,28 +18,39 @@ public class BoundedStack {
 
     /**
      * 
-     * @param capacity
+     * @param catalog
      */
-    public BoundedStack(int capacity){
+    public BoundedStack(int catalog){
         this.catalog = new ArrayList<>();
-        this.capacity = capacity ; 
+        this.catalog = catalog ; 
         
 
     }
     private void checkRep() {
-        
+        assert catalog != null;
+    assert catalog > 0;
+    assert catalog.size() <= catalog ;
+
+    Set<String> set = new HashSet<>();
+
+    for(String s : catalog){
+        assert s != null;
+        assert !s.isEmpty();
+        assert set.add(s);
+    }
     }
     
     public BoundedStack(List<String> initial) {
         if(initial == null) throw new IllegalArgumentException() ;
-        this.capacity = initial.size();
-        if(initial.size() > capacity) throw new IllegalArgumentException() ;
+        this.catalog = initial.size();
+        if(initial.size() > catalog) throw new IllegalArgumentException() ;
         Set<String> seen = new HashSet<>();
         for (String s : initial) {
             if(s == null || s == "") throw new IllegalArgumentException();
             if(!seen.add(s)) throw new IllegalArgumentException() ;
         }
-        this.catalog = new ArrayList<>(initial) ;  // แก้บรรทัดนี้
+        this.catalog = new ArrayList<>(initial) ; 
+         this.catalog = catalog;// แก้บรรทัดนี้
         checkRep(); 
     }
     
@@ -47,7 +58,7 @@ public class BoundedStack {
     /**
      * @param s
      */
-    public boolean add(String movie){
+    public boolean push(String movie){
         return false ;
     }
     public boolean pop(String movie){
